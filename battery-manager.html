@@ -2,287 +2,371 @@
 
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>充電電池管理</title>
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="電池管理" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="電池管理"/>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #dff0fb; font-family: 'Noto Sans TC','PingFang TC',sans-serif; }
-    select option { background: #fff; color: #1e4a6e; }
-    input::placeholder { color: #93bcd6; }
-    .tab-btn { flex: 1; padding: 12px 4px; border: none; cursor: pointer; background: transparent; font-size: 13px; transition: all 0.2s; border-bottom: 2.5px solid transparent; }
-    .tab-btn.active { color: #1a6fad; font-weight: 700; border-bottom: 2.5px solid #1a6fad; }
-    .tab-btn:not(.active) { color: #6aadce; }
-    .card { background: #fff; border: 1.5px solid #b8ddf2; border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(26,111,173,0.07); }
-    .bar-bg { height: 7px; background: #c8e5f7; border-radius: 99px; overflow: hidden; margin-bottom: 10px; }
-    .bar-fill { height: 100%; border-radius: 99px; transition: width 0.5s; }
-    .tag { background: rgba(26,111,173,0.07); border: 1px solid rgba(26,111,173,0.25); border-radius: 20px; padding: 3px 11px; font-size: 12px; color: #1e4a6e; display: inline-block; margin: 2px 3px 2px 0; }
-    .tag-aaa { background: rgba(56,160,212,0.07); border-color: rgba(56,160,212,0.25); }
-    .btn-round { width: 34px; height: 34px; border-radius: 10px; font-size: 18px; cursor: pointer; font-weight: 700; border: none; display: inline-flex; align-items: center; justify-content: center; }
-    .icon-btn { width: 34px; height: 34px; border-radius: 10px; background: #c8e5f7; border: 1px solid #b8ddf2; font-size: 16px; cursor: pointer; }
-    .input-field { background: #dff0fb; border: 1.5px solid #b8ddf2; border-radius: 10px; padding: 10px 12px; color: #1e4a6e; font-size: 14px; outline: none; width: 100%; }
-    .emoji-btn { background: #dff0fb; border: 1px solid #b8ddf2; border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 18px; }
-    .emoji-btn.selected { background: rgba(26,111,173,0.13); border: 1.5px solid #1a6fad; }
-    .add-btn { background: linear-gradient(135deg, #1a6fad, #38a0d4); border: none; border-radius: 10px; padding: 8px 18px; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(26,111,173,0.25); }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(14,77,128,0.3); z-index: 50; display: flex; align-items: flex-end; }
-    .modal-box { background: #f0f8ff; border-radius: 22px 22px 0 0; padding: 24px 20px 44px; width: 100%; max-width: 480px; margin: 0 auto; border: 1.5px solid #b8ddf2; box-shadow: 0 -4px 24px rgba(26,111,173,0.14); }
-    .modal-cancel { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid #b8ddf2; background: #fff; color: #6aadce; font-size: 14px; cursor: pointer; }
-    .modal-confirm { flex: 2; padding: 12px; border-radius: 12px; border: none; background: linear-gradient(135deg, #1a6fad, #38a0d4); color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(26,111,173,0.25); }
-    .done-btn { margin-top: 10px; padding: 7px 22px; border-radius: 10px; border: none; background: #1a6fad; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; }
-    .empty { text-align: center; padding: 52px 16px; color: #b8ddf2; font-size: 14px; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#dff0fb;font-family:'PingFang TC','Noto Sans TC',sans-serif;color:#1e4a6e;padding-bottom:80px}
+    input,select,button{font-family:inherit}
+
+```
+/* Header */
+#header{background:linear-gradient(135deg,#0e4d80,#1a6fad,#38a0d4);padding:20px 16px 16px;position:sticky;top:0;z-index:10;box-shadow:0 2px 14px rgba(14,77,128,.2)}
+#header h1{color:#fff;font-size:18px;font-weight:700}
+#header p{color:rgba(255,255,255,.6);font-size:11px;margin-top:2px}
+
+/* Tabs */
+#tabs{display:flex;background:#fff;border-bottom:1.5px solid #b8ddf2;padding:0 12px}
+.tab{flex:1;padding:12px 4px;border:none;background:transparent;font-size:13px;color:#6aadce;cursor:pointer;border-bottom:2.5px solid transparent}
+.tab.active{color:#1a6fad;font-weight:700;border-bottom:2.5px solid #1a6fad}
+
+/* Content */
+#content{padding:16px}
+.section-label{font-size:13px;color:#6aadce;margin-bottom:14px}
+
+/* Card */
+.card{background:#fff;border:1.5px solid #b8ddf2;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(26,111,173,.07)}
+
+/* Battery icon area */
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-left{display:flex;align-items:center;gap:12px}
+.bat-label{font-weight:700;font-size:15px;color:#0e4d80}
+.bat-sub{font-size:12px;color:#6aadce;margin-top:2px}
+.stock-num{font-size:26px;font-weight:800;text-align:right}
+.stock-unit{font-size:10px;color:#6aadce;text-align:right}
+
+/* Progress bar */
+.bar-bg{height:7px;background:#c8e5f7;border-radius:99px;overflow:hidden;margin-bottom:10px}
+.bar-fill{height:100%;border-radius:99px;transition:width .5s}
+
+/* Tags */
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{background:rgba(26,111,173,.08);border:1px solid rgba(26,111,173,.25);border-radius:20px;padding:3px 10px;font-size:12px;color:#1e4a6e}
+.no-dev{font-size:12px;color:#b8ddf2}
+
+/* Inventory controls */
+.inv-row{display:flex;align-items:center;justify-content:space-between}
+.inv-controls{display:flex;align-items:center;gap:12px}
+.btn-minus{width:34px;height:34px;border-radius:10px;border:1.5px solid rgba(224,90,90,.35);background:rgba(224,90,90,.1);color:#e05a5a;font-size:20px;cursor:pointer;font-weight:700}
+.btn-plus-aa{width:34px;height:34px;border-radius:10px;border:1.5px solid rgba(26,111,173,.35);background:rgba(26,111,173,.1);color:#1a6fad;font-size:20px;cursor:pointer;font-weight:700}
+.btn-plus-aaa{width:34px;height:34px;border-radius:10px;border:1.5px solid rgba(56,160,212,.35);background:rgba(56,160,212,.1);color:#38a0d4;font-size:20px;cursor:pointer;font-weight:700}
+.inv-num{font-size:24px;font-weight:800;min-width:38px;text-align:center}
+
+/* Devices */
+.dev-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.dev-count{font-size:13px;color:#6aadce}
+.add-btn{background:linear-gradient(135deg,#1a6fad,#38a0d4);border:none;border-radius:10px;padding:8px 18px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 2px 8px rgba(26,111,173,.25)}
+.dev-row{display:flex;align-items:center;justify-content:space-between}
+.dev-icon{font-size:28px}
+.dev-name{font-weight:700;font-size:15px;color:#0e4d80}
+.dev-type{font-size:12px;color:#6aadce}
+.dev-actions{display:flex;gap:6px}
+.icon-btn{width:34px;height:34px;border-radius:10px;background:#c8e5f7;border:1px solid #b8ddf2;font-size:16px;cursor:pointer}
+.empty{text-align:center;padding:52px 16px;color:#b8ddf2;font-size:14px}
+.empty-emoji{font-size:42px;margin-bottom:12px}
+
+/* Edit form */
+.edit-form{}
+.form-label{font-size:12px;color:#6aadce;margin-bottom:6px}
+.emoji-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.emoji-btn{background:#dff0fb;border:1px solid #b8ddf2;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:18px}
+.emoji-btn.sel{background:rgba(26,111,173,.13);border:1.5px solid #1a6fad}
+.input-field{background:#dff0fb;border:1.5px solid #b8ddf2;border-radius:10px;padding:10px 12px;color:#1e4a6e;font-size:14px;outline:none;width:100%}
+.input-row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.done-btn{margin-top:10px;padding:7px 22px;border-radius:10px;border:none;background:#1a6fad;color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+
+/* Modal */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(14,77,128,.3);z-index:50;align-items:flex-end}
+#modal-overlay.open{display:flex}
+#modal-box{background:#f0f8ff;border-radius:22px 22px 0 0;padding:24px 20px 44px;width:100%;max-width:480px;margin:0 auto;border:1.5px solid #b8ddf2;box-shadow:0 -4px 24px rgba(26,111,173,.14)}
+#modal-box h2{font-size:17px;color:#0e4d80;margin-bottom:16px}
+.modal-row{display:flex;gap:10px;margin-top:18px}
+.modal-cancel{flex:1;padding:12px;border-radius:12px;border:1.5px solid #b8ddf2;background:#fff;color:#6aadce;font-size:14px;cursor:pointer}
+.modal-confirm{flex:2;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#1a6fad,#38a0d4);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+select option{background:#fff;color:#1e4a6e}
+input::placeholder{color:#93bcd6}
+```
+
   </style>
 </head>
 <body>
-<div id="root"></div>
+
+<div id="header">
+  <div style="display:flex;align-items:center;gap:10px">
+    <span style="font-size:28px">🔋</span>
+    <div>
+      <h1>充電電池管理</h1>
+      <p>Battery Manager</p>
+    </div>
+  </div>
+</div>
+
+<div id="tabs">
+  <button class="tab active" onclick="switchTab('overview')">📊 總覽</button>
+  <button class="tab" onclick="switchTab('devices')">🔌 裝置</button>
+  <button class="tab" onclick="switchTab('inventory')">🗃️ 庫存</button>
+</div>
+
+<div id="content"></div>
+
+<!-- Modal -->
+
+<div id="modal-overlay" onclick="closeModalOutside(event)">
+  <div id="modal-box">
+    <h2>新增裝置</h2>
+    <div class="form-label">選擇圖示</div>
+    <div class="emoji-grid" id="modal-icons"></div>
+    <input class="input-field" id="modal-name" placeholder="裝置名稱（例：電視遙控器）" oninput="modalState.name=this.value"/>
+    <div class="input-row">
+      <select class="input-field" id="modal-type" style="flex:2;width:auto" onchange="modalState.batteryType=this.value">
+        <option value="AA">3號電池 (AA)</option>
+        <option value="AAA">4號電池 (AAA)</option>
+      </select>
+      <input type="number" min="1" max="20" class="input-field" id="modal-count" value="1" style="flex:1;width:auto" oninput="modalState.count=this.value"/>
+      <span style="color:#6aadce;font-size:13px">顆</span>
+    </div>
+    <div class="modal-row">
+      <button class="modal-cancel" onclick="closeModal()">取消</button>
+      <button class="modal-confirm" onclick="confirmAdd()">新增</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const e = React.createElement;
-const { useState, useEffect } = React;
+const ICONS = ['📱','🎮','🔦','⌨️','🖱️','🎵','📷','⏰','🔔','🪣','🎯','🚗','💡','🎲','📡'];
+const COLORS = { AA:'#1a6fad', AAA:'#38a0d4' };
+const LABELS = { AA:'3號電池 (AA)', AAA:'4號電池 (AAA)' };
 
-const C = {
-primary: ‘#1a6fad’, accent: ‘#38a0d4’, dark: ‘#0e4d80’,
-text: ‘#1e4a6e’, sub: ‘#6aadce’, danger: ‘#e05a5a’, border: ‘#b8ddf2’,
-};
+let currentTab = 'overview';
+let editingId = null;
+let modalState = { name:'', batteryType:'AA', count:1, icon:'📱' };
 
-const BATTERY_TYPES = [
-{ id: ‘AA’,  label: ‘3號電池 (AA)’,  color: C.primary },
-{ id: ‘AAA’, label: ‘4號電池 (AAA)’, color: C.accent  },
-];
-const ICONS = [‘📱’,‘🎮’,‘🔦’,‘⌨️’,‘🖱️’,‘🎵’,‘📷’,‘⏰’,‘🔔’,‘🪣’,‘🎯’,‘🚗’,‘💡’,‘🎲’,‘📡’];
+function load(key, def) {
+  try { return JSON.parse(localStorage.getItem(key)) || def; } catch { return def; }
+}
+function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
-function BatteryIcon({ type, size }) {
-size = size || 32;
-const color = type === ‘AA’ ? C.primary : C.accent;
-const isSmall = type === ‘AAA’;
-const w = isSmall ? 16 : 18;
-const h = isSmall ? size * 0.85 : size * 0.75;
-return e(‘svg’, { width: w, height: h, viewBox: `0 0 ${w} ${h}`, fill: ‘none’ },
-e(‘rect’, { x:0, y:4, width:w, height:h-4, rx:3, fill:color, opacity:0.18, stroke:color, strokeWidth:1.8 }),
-e(‘rect’, { x:w/2-4, y:0, width:8, height:5, rx:1, fill:color }),
-e(‘rect’, { x:3, y:h*0.35, width:w-6, height:h*0.3, rx:1.5, fill:color, opacity:0.7 })
-);
+let inventory = load('battery_inventory', { AA:0, AAA:0 });
+let devices = load('battery_devices', []);
+
+// ── helpers ──
+function totalUsed(type) { return devices.filter(d=>d.batteryType===type).reduce((s,d)=>s+d.count,0); }
+function devsByType(type) { return devices.filter(d=>d.batteryType===type); }
+
+function batteryIcon(type, size) {
+  size = size||32;
+  const color = COLORS[type];
+  const isSmall = type==='AAA';
+  const w = isSmall?16:18, h = isSmall?size*.85:size*.75;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none">
+    <rect x="0" y="4" width="${w}" height="${h-4}" rx="3" fill="${color}" opacity=".18" stroke="${color}" stroke-width="1.8"/>
+    <rect x="${w/2-4}" y="0" width="8" height="5" rx="1" fill="${color}"/>
+    <rect x="3" y="${h*.35}" width="${w-6}" height="${h*.3}" rx="1.5" fill="${color}" opacity=".7"/>
+  </svg>`;
 }
 
-function App() {
-const [inventory, setInventory] = useState(() => {
-try { return JSON.parse(localStorage.getItem(‘battery_inventory’)) || { AA:0, AAA:0 }; } catch { return { AA:0, AAA:0 }; }
-});
-const [devices, setDevices] = useState(() => {
-try { return JSON.parse(localStorage.getItem(‘battery_devices’)) || []; } catch { return []; }
-});
-const [tab, setTab] = useState(‘overview’);
-const [showAdd, setShowAdd] = useState(false);
-const [newDev, setNewDev] = useState({ name:’’, batteryType:‘AA’, count:1, icon:‘📱’ });
-const [editing, setEditing] = useState(null);
-
-useEffect(() => { localStorage.setItem(‘battery_inventory’, JSON.stringify(inventory)); }, [inventory]);
-useEffect(() => { localStorage.setItem(‘battery_devices’, JSON.stringify(devices)); }, [devices]);
-
-const updateInv = (type, delta) =>
-setInventory(p => ({ …p, [type]: Math.max(0, (p[type]||0) + delta) }));
-
-const addDevice = () => {
-if (!newDev.name.trim()) return;
-setDevices(p => […p, { …newDev, id: Date.now(), count: parseInt(newDev.count)||1 }]);
-setNewDev({ name:’’, batteryType:‘AA’, count:1, icon:‘📱’ });
-setShowAdd(false);
-};
-const removeDevice = id => setDevices(p => p.filter(d => d.id !== id));
-const updateDev = (id, field, val) =>
-setDevices(p => p.map(d => d.id === id ? { …d, [field]: val } : d));
-
-const usageByType = { AA:[], AAA:[] };
-devices.forEach(d => { if (usageByType[d.batteryType]) usageByType[d.batteryType].push(d); });
-const totalUsed = {};
-BATTERY_TYPES.forEach(bt => {
-totalUsed[bt.id] = devices.filter(d => d.batteryType === bt.id).reduce((s,d) => s+d.count, 0);
-});
-
-// ── OVERVIEW ──
-const overviewTab = e(‘div’, null,
-e(‘div’, { style:{ marginBottom:14, color:C.sub, fontSize:13 } }, ‘各型號庫存與裝置使用狀況’),
-…BATTERY_TYPES.map(bt => {
-const stock = inventory[bt.id] || 0;
-const used = totalUsed[bt.id] || 0;
-const devList = usageByType[bt.id] || [];
-const barW = Math.min(100, stock / (Math.max(stock, used) || 1) * 100);
-return e(‘div’, { key: bt.id, className:‘card’ },
-e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, justifyContent:‘space-between’, marginBottom:12 } },
-e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:12 } },
-e(BatteryIcon, { type:bt.id, size:38 }),
-e(‘div’, null,
-e(‘div’, { style:{ fontWeight:700, fontSize:15, color:C.dark } }, bt.label),
-e(‘div’, { style:{ fontSize:12, color:C.sub, marginTop:2 } },
-‘庫存 ‘, e(‘span’, { style:{ color:bt.color, fontWeight:700 } }, stock),
-’ 顆・裝置用 ‘, e(‘span’, { style:{ color:C.text } }, used), ’ 顆’
-)
-)
-),
-e(‘div’, { style:{ textAlign:‘right’ } },
-e(‘div’, { style:{ fontSize:26, fontWeight:800, color: stock===0 ? C.danger : bt.color } }, stock),
-e(‘div’, { style:{ fontSize:10, color:C.sub } }, ‘顆’)
-)
-),
-e(‘div’, { className:‘bar-bg’ },
-e(‘div’, { className:‘bar-fill’, style:{ width:`${barW}%`, background:`linear-gradient(90deg,${C.dark},${bt.color})` } })
-),
-devList.length > 0
-? e(‘div’, { style:{ display:‘flex’, flexWrap:‘wrap’ } },
-…devList.map(d => e(‘span’, { key:d.id, className:‘tag’ + (bt.id===‘AAA’?’ tag-aaa’:’’) },
-d.icon + ’ ’ + d.name + ’ ×’ + d.count
-))
-)
-: e(‘div’, { style:{ fontSize:12, color:C.border } }, ‘目前無裝置使用此型號’)
-);
-})
-);
-
-// ── INVENTORY ──
-const inventoryTab = e(‘div’, null,
-e(‘div’, { style:{ marginBottom:14, color:C.sub, fontSize:13 } }, ‘點 +/− 調整庫存數量’),
-…BATTERY_TYPES.map(bt =>
-e(‘div’, { key:bt.id, className:‘card’, style:{ display:‘flex’, alignItems:‘center’, justifyContent:‘space-between’ } },
-e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:12 } },
-e(BatteryIcon, { type:bt.id, size:42 }),
-e(‘div’, null,
-e(‘div’, { style:{ fontWeight:700, color:C.dark } }, bt.label),
-e(‘div’, { style:{ fontSize:11, color:C.sub, marginTop:2 } }, ‘裝置消耗：’ + (totalUsed[bt.id]||0) + ’ 顆’)
-)
-),
-e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:12 } },
-e(‘button’, { className:‘btn-round’, onClick:() => updateInv(bt.id,-1),
-style:{ background:‘rgba(224,90,90,0.12)’, color:C.danger, border:`1.5px solid rgba(224,90,90,0.3)` } }, ‘−’),
-e(‘span’, { style:{ fontSize:24, fontWeight:800, color:bt.color, minWidth:38, textAlign:‘center’ } }, inventory[bt.id]||0),
-e(‘button’, { className:‘btn-round’, onClick:() => updateInv(bt.id,1),
-style:{ background:`${bt.color}18`, color:bt.color, border:`1.5px solid ${bt.color}55` } }, ‘+’)
-)
-)
-)
-);
-
-// ── DEVICES ──
-const devicesTab = e(‘div’, null,
-e(‘div’, { style:{ display:‘flex’, justifyContent:‘space-between’, alignItems:‘center’, marginBottom:14 } },
-e(‘div’, { style:{ color:C.sub, fontSize:13 } }, devices.length + ’ 個裝置’),
-e(‘button’, { className:‘add-btn’, onClick:() => setShowAdd(true) }, ‘+ 新增裝置’)
-),
-devices.length === 0
-? e(‘div’, { className:‘empty’ },
-e(‘div’, { style:{ fontSize:42, marginBottom:12 } }, ‘🔌’),
-‘還沒有裝置，點右上角新增’
-)
-: e(‘div’, null,
-…devices.map(d => {
-const bt = BATTERY_TYPES.find(b => b.id === d.batteryType);
-return e(‘div’, { key:d.id, className:‘card’ },
-editing === d.id
-? e(‘div’, null,
-e(‘div’, { style:{ fontSize:12, color:C.sub, marginBottom:6 } }, ‘Emoji 圖示’),
-e(‘div’, { style:{ display:‘flex’, flexWrap:‘wrap’, gap:6, marginBottom:10 } },
-…ICONS.map(ic => e(‘button’, {
-key:ic, className:‘emoji-btn’ + (d.icon===ic?’ selected’:’’),
-onClick:() => updateDev(d.id,‘icon’,ic)
-}, ic))
-),
-e(‘input’, { className:‘input-field’, value:d.name, placeholder:‘裝置名稱’,
-onChange:ev => updateDev(d.id,‘name’,ev.target.value) }),
-e(‘div’, { style:{ display:‘flex’, gap:8, marginTop:8 } },
-e(‘select’, { className:‘input-field’, value:d.batteryType, style:{ flex:2, width:‘auto’ },
-onChange:ev => updateDev(d.id,‘batteryType’,ev.target.value) },
-…BATTERY_TYPES.map(b => e(‘option’, { key:b.id, value:b.id }, b.label))
-),
-e(‘input’, { type:‘number’, min:1, max:20, className:‘input-field’, value:d.count, style:{ flex:1, width:‘auto’ },
-onChange:ev => updateDev(d.id,‘count’,parseInt(ev.target.value)||1) }),
-e(‘span’, { style:{ color:C.sub, alignSelf:‘center’, fontSize:13 } }, ‘顆’)
-),
-e(‘button’, { className:‘done-btn’, onClick:() => setEditing(null) }, ‘完成’)
-)
-: e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, justifyContent:‘space-between’ } },
-e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:12 } },
-e(‘span’, { style:{ fontSize:28 } }, d.icon),
-e(‘div’, null,
-e(‘div’, { style:{ fontWeight:700, fontSize:15, color:C.dark } }, d.name),
-e(‘div’, { style:{ fontSize:12, color:C.sub } },
-e(‘span’, { style:{ color: bt ? bt.color : C.sub } }, bt ? bt.label : ‘’),
-’ × ’ + d.count + ’ 顆’
-)
-)
-),
-e(‘div’, { style:{ display:‘flex’, gap:6 } },
-e(‘button’, { className:‘icon-btn’, onClick:() => setEditing(d.id) }, ‘✏️’),
-e(‘button’, { className:‘icon-btn’, onClick:() => removeDevice(d.id) }, ‘🗑️’)
-)
-)
-);
-})
-)
-);
-
-// ── MODAL ──
-const modal = showAdd && e(‘div’, { className:‘modal-overlay’, onClick:ev => ev.target===ev.currentTarget && setShowAdd(false) },
-e(‘div’, { className:‘modal-box’ },
-e(‘div’, { style:{ fontWeight:700, fontSize:17, color:C.dark, marginBottom:16 } }, ‘新增裝置’),
-e(‘div’, { style:{ fontSize:12, color:C.sub, marginBottom:6 } }, ‘選擇圖示’),
-e(‘div’, { style:{ display:‘flex’, flexWrap:‘wrap’, gap:6, marginBottom:14 } },
-…ICONS.map(ic => e(‘button’, {
-key:ic, className:‘emoji-btn’ + (newDev.icon===ic?’ selected’:’’),
-onClick:() => setNewDev(p => ({ …p, icon:ic }))
-}, ic))
-),
-e(‘input’, { className:‘input-field’, value:newDev.name, placeholder:‘裝置名稱（例：電視遙控器）’,
-onChange:ev => setNewDev(p => ({ …p, name:ev.target.value })) }),
-e(‘div’, { style:{ display:‘flex’, gap:8, marginTop:10 } },
-e(‘select’, { className:‘input-field’, value:newDev.batteryType, style:{ flex:2, width:‘auto’ },
-onChange:ev => setNewDev(p => ({ …p, batteryType:ev.target.value })) },
-…BATTERY_TYPES.map(bt => e(‘option’, { key:bt.id, value:bt.id }, bt.label))
-),
-e(‘input’, { type:‘number’, min:1, max:20, className:‘input-field’, value:newDev.count, style:{ flex:1, width:‘auto’ },
-onChange:ev => setNewDev(p => ({ …p, count:ev.target.value })) }),
-e(‘span’, { style:{ color:C.sub, alignSelf:‘center’, fontSize:13 } }, ‘顆’)
-),
-e(‘div’, { style:{ display:‘flex’, gap:10, marginTop:18 } },
-e(‘button’, { className:‘modal-cancel’, onClick:() => setShowAdd(false) }, ‘取消’),
-e(‘button’, { className:‘modal-confirm’, onClick:addDevice }, ‘新增’)
-)
-)
-);
-
-return e(‘div’, { style:{ minHeight:‘100vh’, background:’#dff0fb’, color:C.text, paddingBottom:80 } },
-// Header
-e(‘div’, { style:{
-background:`linear-gradient(135deg, ${C.dark} 0%, ${C.primary} 60%, ${C.accent} 100%)`,
-padding:‘22px 20px 18px’, position:‘sticky’, top:0, zIndex:10,
-boxShadow:‘0 2px 14px rgba(14,77,128,0.2)’
-} },
-e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:10 } },
-e(‘span’, { style:{ fontSize:28 } }, ‘🔋’),
-e(‘div’, null,
-e(‘div’, { style:{ fontSize:18, fontWeight:700, color:’#fff’, letterSpacing:‘0.03em’ } }, ‘充電電池管理’),
-e(‘div’, { style:{ fontSize:11, color:‘rgba(255,255,255,0.6)’ } }, ‘Battery Manager’)
-)
-)
-),
-// Tabs
-e(‘div’, { style:{ display:‘flex’, background:’#fff’, borderBottom:`1.5px solid ${C.border}`, padding:‘0 12px’ } },
-…[ [‘overview’,‘📊 總覽’], [‘devices’,‘🔌 裝置’], [‘inventory’,‘🗃️ 庫存’] ].map(([key,label]) =>
-e(‘button’, { key, className:‘tab-btn’ + (tab===key?’ active’:’’), onClick:() => setTab(key) }, label)
-)
-),
-// Content
-e(‘div’, { style:{ padding:16 } },
-tab === ‘overview’   ? overviewTab :
-tab === ‘inventory’  ? inventoryTab :
-devicesTab
-),
-modal
-);
+// ── render ──
+function render() {
+  const c = document.getElementById('content');
+  if (currentTab==='overview') c.innerHTML = renderOverview();
+  else if (currentTab==='inventory') c.innerHTML = renderInventory();
+  else c.innerHTML = renderDevices();
 }
 
-ReactDOM.createRoot(document.getElementById(‘root’)).render(e(App, null));
+function renderOverview() {
+  let html = '<div class="section-label">各型號庫存與裝置使用狀況</div>';
+  ['AA','AAA'].forEach(type => {
+    const stock = inventory[type]||0;
+    const used = totalUsed(type);
+    const color = COLORS[type];
+    const barW = Math.min(100, stock/(Math.max(stock,used)||1)*100);
+    const numColor = stock===0 ? '#e05a5a' : color;
+    const list = devsByType(type);
+    const tagsHtml = list.length
+      ? list.map(d=>`<span class="tag">${d.icon} ${escHtml(d.name)} ×${d.count}</span>`).join('')
+      : '<span class="no-dev">目前無裝置使用此型號</span>';
+    html += `<div class="card">
+      <div class="card-top">
+        <div class="card-left">
+          ${batteryIcon(type,38)}
+          <div>
+            <div class="bat-label">${LABELS[type]}</div>
+            <div class="bat-sub">庫存 <b style="color:${color}">${stock}</b> 顆・裝置用 <b style="color:#1e4a6e">${used}</b> 顆</div>
+          </div>
+        </div>
+        <div>
+          <div class="stock-num" style="color:${numColor}">${stock}</div>
+          <div class="stock-unit">顆</div>
+        </div>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${barW}%;background:linear-gradient(90deg,#0e4d80,${color})"></div></div>
+      <div class="tags">${tagsHtml}</div>
+    </div>`;
+  });
+  return html;
+}
+
+function renderInventory() {
+  let html = '<div class="section-label">點 +/− 調整庫存數量</div>';
+  ['AA','AAA'].forEach(type => {
+    const color = COLORS[type];
+    const plusClass = type==='AA'?'btn-plus-aa':'btn-plus-aaa';
+    html += `<div class="card">
+      <div class="inv-row">
+        <div class="card-left">
+          ${batteryIcon(type,42)}
+          <div>
+            <div class="bat-label">${LABELS[type]}</div>
+            <div class="bat-sub" style="margin-top:2px">裝置消耗：${totalUsed(type)} 顆</div>
+          </div>
+        </div>
+        <div class="inv-controls">
+          <button class="btn-minus" onclick="changeInv('${type}',-1)">−</button>
+          <span class="inv-num" style="color:${color}">${inventory[type]||0}</span>
+          <button class="${plusClass}" onclick="changeInv('${type}',1)">+</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  return html;
+}
+
+function renderDevices() {
+  let html = `<div class="dev-header">
+    <span class="dev-count">${devices.length} 個裝置</span>
+    <button class="add-btn" onclick="openModal()">+ 新增裝置</button>
+  </div>`;
+  if (!devices.length) {
+    html += `<div class="empty"><div class="empty-emoji">🔌</div>還沒有裝置，點右上角新增</div>`;
+    return html;
+  }
+  devices.forEach(d => {
+    const color = COLORS[d.batteryType]||'#6aadce';
+    if (editingId === d.id) {
+      const iconsHtml = ICONS.map(ic =>
+        `<button class="emoji-btn${d.icon===ic?' sel':''}" onclick="setEditIcon(${d.id},'${ic}')">${ic}</button>`
+      ).join('');
+      html += `<div class="card edit-form">
+        <div class="form-label">Emoji 圖示</div>
+        <div class="emoji-grid">${iconsHtml}</div>
+        <input class="input-field" value="${escHtml(d.name)}" placeholder="裝置名稱" oninput="updateDev(${d.id},'name',this.value)"/>
+        <div class="input-row">
+          <select class="input-field" style="flex:2;width:auto" onchange="updateDev(${d.id},'batteryType',this.value)">
+            <option value="AA"${d.batteryType==='AA'?' selected':''}>3號電池 (AA)</option>
+            <option value="AAA"${d.batteryType==='AAA'?' selected':''}>4號電池 (AAA)</option>
+          </select>
+          <input type="number" min="1" max="20" class="input-field" value="${d.count}" style="flex:1;width:auto" oninput="updateDev(${d.id},'count',parseInt(this.value)||1)"/>
+          <span style="color:#6aadce;font-size:13px">顆</span>
+        </div>
+        <button class="done-btn" onclick="stopEdit()">完成</button>
+      </div>`;
+    } else {
+      html += `<div class="card">
+        <div class="dev-row">
+          <div class="card-left">
+            <span class="dev-icon">${d.icon}</span>
+            <div>
+              <div class="dev-name">${escHtml(d.name)}</div>
+              <div class="dev-type"><span style="color:${color}">${LABELS[d.batteryType]}</span> × ${d.count} 顆</div>
+            </div>
+          </div>
+          <div class="dev-actions">
+            <button class="icon-btn" onclick="startEdit(${d.id})">✏️</button>
+            <button class="icon-btn" onclick="removeDev(${d.id})">🗑️</button>
+          </div>
+        </div>
+      </div>`;
+    }
+  });
+  return html;
+}
+
+// ── actions ──
+function switchTab(tab) {
+  currentTab = tab;
+  editingId = null;
+  document.querySelectorAll('.tab').forEach((btn,i) => {
+    btn.classList.toggle('active', ['overview','devices','inventory'][i]===tab);
+  });
+  render();
+}
+
+function changeInv(type, delta) {
+  inventory[type] = Math.max(0, (inventory[type]||0)+delta);
+  save('battery_inventory', inventory);
+  render();
+}
+
+function startEdit(id) { editingId=id; render(); }
+function stopEdit() { editingId=null; render(); }
+
+function updateDev(id, field, val) {
+  devices = devices.map(d => d.id===id ? {...d,[field]:val} : d);
+  save('battery_devices', devices);
+  render();
+}
+
+function setEditIcon(id, icon) {
+  devices = devices.map(d => d.id===id ? {...d,icon} : d);
+  save('battery_devices', devices);
+  render();
+}
+
+function removeDev(id) {
+  devices = devices.filter(d => d.id!==id);
+  save('battery_devices', devices);
+  render();
+}
+
+// ── modal ──
+function openModal() {
+  modalState = { name:'', batteryType:'AA', count:1, icon:'📱' };
+  document.getElementById('modal-name').value = '';
+  document.getElementById('modal-type').value = 'AA';
+  document.getElementById('modal-count').value = 1;
+  renderModalIcons();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e) { if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+function renderModalIcons() {
+  document.getElementById('modal-icons').innerHTML = ICONS.map(ic =>
+    `<button class="emoji-btn${modalState.icon===ic?' sel':''}" onclick="selectModalIcon('${ic}')">${ic}</button>`
+  ).join('');
+}
+
+function selectModalIcon(ic) {
+  modalState.icon = ic;
+  renderModalIcons();
+}
+
+function confirmAdd() {
+  const name = document.getElementById('modal-name').value.trim();
+  if (!name) return;
+  const dev = {
+    id: Date.now(),
+    name,
+    batteryType: document.getElementById('modal-type').value,
+    count: parseInt(document.getElementById('modal-count').value)||1,
+    icon: modalState.icon
+  };
+  devices.push(dev);
+  save('battery_devices', devices);
+  closeModal();
+  switchTab('devices');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// init
+render();
 </script>
 
 </body>
