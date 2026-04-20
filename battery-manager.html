@@ -10,367 +10,280 @@
   <meta name="apple-mobile-web-app-title" content="電池管理" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #dff0fb; }
+    body { background: #dff0fb; font-family: 'Noto Sans TC','PingFang TC',sans-serif; }
     select option { background: #fff; color: #1e4a6e; }
     input::placeholder { color: #93bcd6; }
+    .tab-btn { flex: 1; padding: 12px 4px; border: none; cursor: pointer; background: transparent; font-size: 13px; transition: all 0.2s; border-bottom: 2.5px solid transparent; }
+    .tab-btn.active { color: #1a6fad; font-weight: 700; border-bottom: 2.5px solid #1a6fad; }
+    .tab-btn:not(.active) { color: #6aadce; }
+    .card { background: #fff; border: 1.5px solid #b8ddf2; border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(26,111,173,0.07); }
+    .bar-bg { height: 7px; background: #c8e5f7; border-radius: 99px; overflow: hidden; margin-bottom: 10px; }
+    .bar-fill { height: 100%; border-radius: 99px; transition: width 0.5s; }
+    .tag { background: rgba(26,111,173,0.07); border: 1px solid rgba(26,111,173,0.25); border-radius: 20px; padding: 3px 11px; font-size: 12px; color: #1e4a6e; display: inline-block; margin: 2px 3px 2px 0; }
+    .tag-aaa { background: rgba(56,160,212,0.07); border-color: rgba(56,160,212,0.25); }
+    .btn-round { width: 34px; height: 34px; border-radius: 10px; font-size: 18px; cursor: pointer; font-weight: 700; border: none; display: inline-flex; align-items: center; justify-content: center; }
+    .icon-btn { width: 34px; height: 34px; border-radius: 10px; background: #c8e5f7; border: 1px solid #b8ddf2; font-size: 16px; cursor: pointer; }
+    .input-field { background: #dff0fb; border: 1.5px solid #b8ddf2; border-radius: 10px; padding: 10px 12px; color: #1e4a6e; font-size: 14px; outline: none; width: 100%; }
+    .emoji-btn { background: #dff0fb; border: 1px solid #b8ddf2; border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 18px; }
+    .emoji-btn.selected { background: rgba(26,111,173,0.13); border: 1.5px solid #1a6fad; }
+    .add-btn { background: linear-gradient(135deg, #1a6fad, #38a0d4); border: none; border-radius: 10px; padding: 8px 18px; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(26,111,173,0.25); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(14,77,128,0.3); z-index: 50; display: flex; align-items: flex-end; }
+    .modal-box { background: #f0f8ff; border-radius: 22px 22px 0 0; padding: 24px 20px 44px; width: 100%; max-width: 480px; margin: 0 auto; border: 1.5px solid #b8ddf2; box-shadow: 0 -4px 24px rgba(26,111,173,0.14); }
+    .modal-cancel { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid #b8ddf2; background: #fff; color: #6aadce; font-size: 14px; cursor: pointer; }
+    .modal-confirm { flex: 2; padding: 12px; border-radius: 12px; border: none; background: linear-gradient(135deg, #1a6fad, #38a0d4); color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(26,111,173,0.25); }
+    .done-btn { margin-top: 10px; padding: 7px 22px; border-radius: 10px; border: none; background: #1a6fad; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; }
+    .empty { text-align: center; padding: 52px 16px; color: #b8ddf2; font-size: 14px; }
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+<div id="root"></div>
+<script>
+const e = React.createElement;
+const { useState, useEffect } = React;
 
-```
 const C = {
-  bg:      "#dff0fb",
-  bgDeep:  "#c8e5f7",
-  card:    "#ffffff",
-  border:  "#b8ddf2",
-  primary: "#1a6fad",
-  accent:  "#38a0d4",
-  dark:    "#0e4d80",
-  text:    "#1e4a6e",
-  sub:     "#6aadce",
-  danger:  "#e05a5a",
-  modal:   "#f0f8ff",
+primary: ‘#1a6fad’, accent: ‘#38a0d4’, dark: ‘#0e4d80’,
+text: ‘#1e4a6e’, sub: ‘#6aadce’, danger: ‘#e05a5a’, border: ‘#b8ddf2’,
 };
 
 const BATTERY_TYPES = [
-  { id: "AA",  label: "3號電池 (AA)",  color: C.primary },
-  { id: "AAA", label: "4號電池 (AAA)", color: C.accent  },
+{ id: ‘AA’,  label: ‘3號電池 (AA)’,  color: C.primary },
+{ id: ‘AAA’, label: ‘4號電池 (AAA)’, color: C.accent  },
 ];
+const ICONS = [‘📱’,‘🎮’,‘🔦’,‘⌨️’,‘🖱️’,‘🎵’,‘📷’,‘⏰’,‘🔔’,‘🪣’,‘🎯’,‘🚗’,‘💡’,‘🎲’,‘📡’];
 
-const INITIAL_INVENTORY = { AA: 0, AAA: 0 };
-
-const BatteryIcon = ({ type, size = 32 }) => {
-  const color = type === "AA" ? C.primary : C.accent;
-  const isSmall = type === "AAA";
-  const w = isSmall ? 16 : 18;
-  const h = isSmall ? size * 0.85 : size * 0.75;
-  return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} fill="none">
-      <rect x="0" y="4" width={w} height={h - 4} rx="3" fill={color} opacity="0.18" stroke={color} strokeWidth="1.8"/>
-      <rect x={w / 2 - 4} y="0" width="8" height="5" rx="1" fill={color}/>
-      <rect x="3" y={h * 0.35} width={w - 6} height={h * 0.3} rx="1.5" fill={color} opacity="0.7"/>
-    </svg>
-  );
-};
-
-const btnStyle = (color) => ({
-  width: 34, height: 34, borderRadius: 10,
-  background: `${color}18`, border: `1.5px solid ${color}55`,
-  color, fontSize: 18, cursor: "pointer", fontWeight: 700,
-  display: "inline-flex", alignItems: "center", justifyContent: "center",
-});
-
-const iconBtn = {
-  width: 34, height: 34, borderRadius: 10,
-  background: C.bgDeep, border: `1px solid ${C.border}`,
-  fontSize: 16, cursor: "pointer",
-};
-
-const inputStyle = {
-  background: C.bg,
-  border: `1.5px solid ${C.border}`,
-  borderRadius: 10, padding: "10px 12px",
-  color: C.text, fontSize: 14, outline: "none",
-  width: "100%",
-};
-
-function BatteryManager() {
-  const [inventory, setInventory] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("battery_inventory")) || INITIAL_INVENTORY; } catch { return INITIAL_INVENTORY; }
-  });
-  const [devices, setDevices] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("battery_devices")) || []; } catch { return []; }
-  });
-  const [tab, setTab] = useState("overview");
-  const [showAddDevice, setShowAddDevice] = useState(false);
-  const [newDevice, setNewDevice] = useState({ name: "", batteryType: "AA", count: 1, icon: "📱" });
-  const [editingDevice, setEditingDevice] = useState(null);
-
-  useEffect(() => { localStorage.setItem("battery_inventory", JSON.stringify(inventory)); }, [inventory]);
-  useEffect(() => { localStorage.setItem("battery_devices", JSON.stringify(devices)); }, [devices]);
-
-  const updateInventory = (type, delta) =>
-    setInventory(prev => ({ ...prev, [type]: Math.max(0, (prev[type] || 0) + delta) }));
-
-  const addDevice = () => {
-    if (!newDevice.name.trim()) return;
-    setDevices(prev => [...prev, { ...newDevice, id: Date.now(), count: parseInt(newDevice.count) || 1 }]);
-    setNewDevice({ name: "", batteryType: "AA", count: 1, icon: "📱" });
-    setShowAddDevice(false);
-  };
-
-  const removeDevice = (id) => setDevices(prev => prev.filter(d => d.id !== id));
-  const updateDevice = (id, field, value) =>
-    setDevices(prev => prev.map(d => d.id === id ? { ...d, [field]: value } : d));
-
-  const usageByType = { AA: [], AAA: [] };
-  devices.forEach(d => { if (usageByType[d.batteryType]) usageByType[d.batteryType].push(d); });
-
-  const totalUsed = {};
-  BATTERY_TYPES.forEach(bt => {
-    totalUsed[bt.id] = devices.filter(d => d.batteryType === bt.id).reduce((s, d) => s + d.count, 0);
-  });
-
-  const ICONS = ["📱","🎮","🔦","⌨️","🖱️","🎵","📷","⏰","🔔","🪣","🎯","🚗","💡","🎲","📡"];
-
-  return (
-    <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "'Noto Sans TC','PingFang TC',sans-serif", color: C.text, paddingBottom: 80 }}>
-
-      {/* Header */}
-      <div style={{
-        background: `linear-gradient(135deg, ${C.dark} 0%, ${C.primary} 60%, ${C.accent} 100%)`,
-        padding: "22px 20px 18px",
-        position: "sticky", top: 0, zIndex: 10,
-        boxShadow: "0 2px 14px rgba(14,77,128,0.2)",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 28 }}>🔋</span>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", letterSpacing: "0.03em" }}>充電電池管理</div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }}>Battery Manager</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div style={{ display: "flex", background: "#fff", borderBottom: `1.5px solid ${C.border}`, padding: "0 12px" }}>
-        {[["overview","📊 總覽"],["devices","🔌 裝置"],["inventory","🗃️ 庫存"]].map(([key, label]) => (
-          <button key={key} onClick={() => setTab(key)} style={{
-            flex: 1, padding: "12px 4px", border: "none", cursor: "pointer",
-            background: "transparent",
-            color: tab === key ? C.primary : C.sub,
-            fontWeight: tab === key ? 700 : 400,
-            fontSize: 13,
-            borderBottom: tab === key ? `2.5px solid ${C.primary}` : "2.5px solid transparent",
-            transition: "all 0.2s",
-          }}>{label}</button>
-        ))}
-      </div>
-
-      <div style={{ padding: 16 }}>
-
-        {/* ── OVERVIEW ── */}
-        {tab === "overview" && (
-          <div>
-            <div style={{ marginBottom: 14, color: C.sub, fontSize: 13 }}>各型號庫存與裝置使用狀況</div>
-            {BATTERY_TYPES.map(bt => {
-              const stock = inventory[bt.id] || 0;
-              const used = totalUsed[bt.id] || 0;
-              const devList = usageByType[bt.id] || [];
-              const barW = Math.min(100, stock / (Math.max(stock, used) || 1) * 100);
-              return (
-                <div key={bt.id} style={{
-                  background: C.card, border: `1.5px solid ${C.border}`,
-                  borderRadius: 16, padding: "16px", marginBottom: 14,
-                  boxShadow: "0 2px 10px rgba(26,111,173,0.07)",
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <BatteryIcon type={bt.id} size={38} />
-                      <div>
-                        <div style={{ fontWeight: 700, fontSize: 15, color: C.dark }}>{bt.label}</div>
-                        <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>
-                          庫存 <span style={{ color: bt.color, fontWeight: 700 }}>{stock}</span> 顆・裝置用 <span style={{ color: C.text }}>{used}</span> 顆
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: 26, fontWeight: 800, color: stock === 0 ? C.danger : bt.color }}>{stock}</div>
-                      <div style={{ fontSize: 10, color: C.sub }}>顆</div>
-                    </div>
-                  </div>
-                  <div style={{ height: 7, background: C.bgDeep, borderRadius: 99, overflow: "hidden", marginBottom: 10 }}>
-                    <div style={{ height: "100%", width: `${barW}%`, background: `linear-gradient(90deg, ${C.dark}, ${bt.color})`, borderRadius: 99, transition: "width 0.5s" }} />
-                  </div>
-                  {devList.length > 0 ? (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                      {devList.map(d => (
-                        <span key={d.id} style={{
-                          background: `${bt.color}12`, border: `1px solid ${bt.color}44`,
-                          borderRadius: 20, padding: "3px 11px", fontSize: 12, color: C.text,
-                        }}>{d.icon} {d.name} ×{d.count}</span>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ fontSize: 12, color: C.border }}>目前無裝置使用此型號</div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* ── INVENTORY ── */}
-        {tab === "inventory" && (
-          <div>
-            <div style={{ marginBottom: 14, color: C.sub, fontSize: 13 }}>點 +/− 調整庫存數量</div>
-            {BATTERY_TYPES.map(bt => (
-              <div key={bt.id} style={{
-                background: C.card, border: `1.5px solid ${C.border}`,
-                borderRadius: 16, padding: "16px", marginBottom: 14,
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                boxShadow: "0 2px 10px rgba(26,111,173,0.07)",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <BatteryIcon type={bt.id} size={42} />
-                  <div>
-                    <div style={{ fontWeight: 700, color: C.dark }}>{bt.label}</div>
-                    <div style={{ fontSize: 11, color: C.sub, marginTop: 2 }}>裝置消耗：{totalUsed[bt.id] || 0} 顆</div>
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <button onClick={() => updateInventory(bt.id, -1)} style={btnStyle(C.danger)}>−</button>
-                  <span style={{ fontSize: 24, fontWeight: 800, color: bt.color, minWidth: 38, textAlign: "center" }}>{inventory[bt.id] || 0}</span>
-                  <button onClick={() => updateInventory(bt.id, 1)} style={btnStyle(bt.color)}>+</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* ── DEVICES ── */}
-        {tab === "devices" && (
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <div style={{ color: C.sub, fontSize: 13 }}>{devices.length} 個裝置</div>
-              <button onClick={() => setShowAddDevice(true)} style={{
-                background: `linear-gradient(135deg, ${C.primary}, ${C.accent})`,
-                border: "none", borderRadius: 10, padding: "8px 18px",
-                color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer",
-                boxShadow: "0 2px 8px rgba(26,111,173,0.25)",
-              }}>+ 新增裝置</button>
-            </div>
-
-            {devices.length === 0 && (
-              <div style={{ textAlign: "center", padding: "52px 16px", color: C.border, fontSize: 14 }}>
-                <div style={{ fontSize: 42, marginBottom: 12 }}>🔌</div>
-                還沒有裝置，點右上角新增
-              </div>
-            )}
-
-            {devices.map(d => {
-              const bt = BATTERY_TYPES.find(b => b.id === d.batteryType);
-              return (
-                <div key={d.id} style={{
-                  background: C.card, border: `1.5px solid ${C.border}`,
-                  borderRadius: 14, padding: "14px 16px", marginBottom: 10,
-                  boxShadow: "0 2px 8px rgba(26,111,173,0.06)",
-                }}>
-                  {editingDevice === d.id ? (
-                    <div>
-                      <div style={{ fontSize: 12, color: C.sub, marginBottom: 6 }}>Emoji 圖示</div>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
-                        {ICONS.map(ic => (
-                          <button key={ic} onClick={() => updateDevice(d.id, "icon", ic)} style={{
-                            background: d.icon === ic ? `${C.primary}22` : C.bg,
-                            border: d.icon === ic ? `1.5px solid ${C.primary}` : `1px solid ${C.border}`,
-                            borderRadius: 8, padding: "4px 8px", cursor: "pointer", fontSize: 18,
-                          }}>{ic}</button>
-                        ))}
-                      </div>
-                      <input value={d.name} onChange={e => updateDevice(d.id, "name", e.target.value)} placeholder="裝置名稱" style={inputStyle} />
-                      <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                        <select value={d.batteryType} onChange={e => updateDevice(d.id, "batteryType", e.target.value)} style={{ ...inputStyle, flex: 2, width: "auto" }}>
-                          {BATTERY_TYPES.map(b => <option key={b.id} value={b.id}>{b.label}</option>)}
-                        </select>
-                        <input type="number" min="1" max="20" value={d.count}
-                          onChange={e => updateDevice(d.id, "count", parseInt(e.target.value) || 1)}
-                          style={{ ...inputStyle, flex: 1, width: "auto" }} />
-                        <span style={{ color: C.sub, alignSelf: "center", fontSize: 13 }}>顆</span>
-                      </div>
-                      <button onClick={() => setEditingDevice(null)} style={{
-                        marginTop: 10, padding: "7px 22px", borderRadius: 10, border: "none",
-                        background: C.primary, color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer",
-                      }}>完成</button>
-                    </div>
-                  ) : (
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                        <span style={{ fontSize: 28 }}>{d.icon}</span>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: 15, color: C.dark }}>{d.name}</div>
-                          <div style={{ fontSize: 12, color: C.sub }}>
-                            <span style={{ color: bt ? bt.color : C.sub }}>{bt ? bt.label : ""}</span> × {d.count} 顆
-                          </div>
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <button onClick={() => setEditingDevice(d.id)} style={iconBtn}>✏️</button>
-                        <button onClick={() => removeDevice(d.id)} style={iconBtn}>🗑️</button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* ── Modal ── */}
-      {showAddDevice && (
-        <div style={{
-          position: "fixed", inset: 0, background: "rgba(14,77,128,0.3)", zIndex: 50,
-          display: "flex", alignItems: "flex-end",
-        }} onClick={e => e.target === e.currentTarget && setShowAddDevice(false)}>
-          <div style={{
-            background: C.modal, borderRadius: "22px 22px 0 0",
-            padding: "24px 20px 44px", width: "100%", maxWidth: 480, margin: "0 auto",
-            border: `1.5px solid ${C.border}`,
-            boxShadow: "0 -4px 24px rgba(26,111,173,0.14)",
-          }}>
-            <div style={{ fontWeight: 700, fontSize: 17, color: C.dark, marginBottom: 16 }}>新增裝置</div>
-            <div style={{ fontSize: 12, color: C.sub, marginBottom: 6 }}>選擇圖示</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
-              {ICONS.map(ic => (
-                <button key={ic} onClick={() => setNewDevice(p => ({ ...p, icon: ic }))} style={{
-                  background: newDevice.icon === ic ? `${C.primary}20` : C.bg,
-                  border: newDevice.icon === ic ? `1.5px solid ${C.primary}` : `1px solid ${C.border}`,
-                  borderRadius: 8, padding: "4px 8px", cursor: "pointer", fontSize: 18,
-                }}>{ic}</button>
-              ))}
-            </div>
-            <input value={newDevice.name} onChange={e => setNewDevice(p => ({ ...p, name: e.target.value }))}
-              placeholder="裝置名稱（例：電視遙控器）" style={inputStyle} />
-            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-              <select value={newDevice.batteryType} onChange={e => setNewDevice(p => ({ ...p, batteryType: e.target.value }))}
-                style={{ ...inputStyle, flex: 2, width: "auto" }}>
-                {BATTERY_TYPES.map(bt => <option key={bt.id} value={bt.id}>{bt.label}</option>)}
-              </select>
-              <input type="number" min="1" max="20" value={newDevice.count}
-                onChange={e => setNewDevice(p => ({ ...p, count: e.target.value }))}
-                style={{ ...inputStyle, flex: 1, width: "auto" }} />
-              <span style={{ color: C.sub, alignSelf: "center", fontSize: 13 }}>顆</span>
-            </div>
-            <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-              <button onClick={() => setShowAddDevice(false)} style={{
-                flex: 1, padding: "12px", borderRadius: 12,
-                border: `1.5px solid ${C.border}`, background: "#fff",
-                color: C.sub, fontSize: 14, cursor: "pointer",
-              }}>取消</button>
-              <button onClick={addDevice} style={{
-                flex: 2, padding: "12px", borderRadius: 12, border: "none",
-                background: `linear-gradient(135deg, ${C.primary}, ${C.accent})`,
-                color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer",
-                boxShadow: "0 2px 8px rgba(26,111,173,0.25)",
-              }}>新增</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+function BatteryIcon({ type, size }) {
+size = size || 32;
+const color = type === ‘AA’ ? C.primary : C.accent;
+const isSmall = type === ‘AAA’;
+const w = isSmall ? 16 : 18;
+const h = isSmall ? size * 0.85 : size * 0.75;
+return e(‘svg’, { width: w, height: h, viewBox: `0 0 ${w} ${h}`, fill: ‘none’ },
+e(‘rect’, { x:0, y:4, width:w, height:h-4, rx:3, fill:color, opacity:0.18, stroke:color, strokeWidth:1.8 }),
+e(‘rect’, { x:w/2-4, y:0, width:8, height:5, rx:1, fill:color }),
+e(‘rect’, { x:3, y:h*0.35, width:w-6, height:h*0.3, rx:1.5, fill:color, opacity:0.7 })
+);
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<BatteryManager />);
-```
+function App() {
+const [inventory, setInventory] = useState(() => {
+try { return JSON.parse(localStorage.getItem(‘battery_inventory’)) || { AA:0, AAA:0 }; } catch { return { AA:0, AAA:0 }; }
+});
+const [devices, setDevices] = useState(() => {
+try { return JSON.parse(localStorage.getItem(‘battery_devices’)) || []; } catch { return []; }
+});
+const [tab, setTab] = useState(‘overview’);
+const [showAdd, setShowAdd] = useState(false);
+const [newDev, setNewDev] = useState({ name:’’, batteryType:‘AA’, count:1, icon:‘📱’ });
+const [editing, setEditing] = useState(null);
 
-  </script>
+useEffect(() => { localStorage.setItem(‘battery_inventory’, JSON.stringify(inventory)); }, [inventory]);
+useEffect(() => { localStorage.setItem(‘battery_devices’, JSON.stringify(devices)); }, [devices]);
+
+const updateInv = (type, delta) =>
+setInventory(p => ({ …p, [type]: Math.max(0, (p[type]||0) + delta) }));
+
+const addDevice = () => {
+if (!newDev.name.trim()) return;
+setDevices(p => […p, { …newDev, id: Date.now(), count: parseInt(newDev.count)||1 }]);
+setNewDev({ name:’’, batteryType:‘AA’, count:1, icon:‘📱’ });
+setShowAdd(false);
+};
+const removeDevice = id => setDevices(p => p.filter(d => d.id !== id));
+const updateDev = (id, field, val) =>
+setDevices(p => p.map(d => d.id === id ? { …d, [field]: val } : d));
+
+const usageByType = { AA:[], AAA:[] };
+devices.forEach(d => { if (usageByType[d.batteryType]) usageByType[d.batteryType].push(d); });
+const totalUsed = {};
+BATTERY_TYPES.forEach(bt => {
+totalUsed[bt.id] = devices.filter(d => d.batteryType === bt.id).reduce((s,d) => s+d.count, 0);
+});
+
+// ── OVERVIEW ──
+const overviewTab = e(‘div’, null,
+e(‘div’, { style:{ marginBottom:14, color:C.sub, fontSize:13 } }, ‘各型號庫存與裝置使用狀況’),
+…BATTERY_TYPES.map(bt => {
+const stock = inventory[bt.id] || 0;
+const used = totalUsed[bt.id] || 0;
+const devList = usageByType[bt.id] || [];
+const barW = Math.min(100, stock / (Math.max(stock, used) || 1) * 100);
+return e(‘div’, { key: bt.id, className:‘card’ },
+e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, justifyContent:‘space-between’, marginBottom:12 } },
+e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:12 } },
+e(BatteryIcon, { type:bt.id, size:38 }),
+e(‘div’, null,
+e(‘div’, { style:{ fontWeight:700, fontSize:15, color:C.dark } }, bt.label),
+e(‘div’, { style:{ fontSize:12, color:C.sub, marginTop:2 } },
+‘庫存 ‘, e(‘span’, { style:{ color:bt.color, fontWeight:700 } }, stock),
+’ 顆・裝置用 ‘, e(‘span’, { style:{ color:C.text } }, used), ’ 顆’
+)
+)
+),
+e(‘div’, { style:{ textAlign:‘right’ } },
+e(‘div’, { style:{ fontSize:26, fontWeight:800, color: stock===0 ? C.danger : bt.color } }, stock),
+e(‘div’, { style:{ fontSize:10, color:C.sub } }, ‘顆’)
+)
+),
+e(‘div’, { className:‘bar-bg’ },
+e(‘div’, { className:‘bar-fill’, style:{ width:`${barW}%`, background:`linear-gradient(90deg,${C.dark},${bt.color})` } })
+),
+devList.length > 0
+? e(‘div’, { style:{ display:‘flex’, flexWrap:‘wrap’ } },
+…devList.map(d => e(‘span’, { key:d.id, className:‘tag’ + (bt.id===‘AAA’?’ tag-aaa’:’’) },
+d.icon + ’ ’ + d.name + ’ ×’ + d.count
+))
+)
+: e(‘div’, { style:{ fontSize:12, color:C.border } }, ‘目前無裝置使用此型號’)
+);
+})
+);
+
+// ── INVENTORY ──
+const inventoryTab = e(‘div’, null,
+e(‘div’, { style:{ marginBottom:14, color:C.sub, fontSize:13 } }, ‘點 +/− 調整庫存數量’),
+…BATTERY_TYPES.map(bt =>
+e(‘div’, { key:bt.id, className:‘card’, style:{ display:‘flex’, alignItems:‘center’, justifyContent:‘space-between’ } },
+e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:12 } },
+e(BatteryIcon, { type:bt.id, size:42 }),
+e(‘div’, null,
+e(‘div’, { style:{ fontWeight:700, color:C.dark } }, bt.label),
+e(‘div’, { style:{ fontSize:11, color:C.sub, marginTop:2 } }, ‘裝置消耗：’ + (totalUsed[bt.id]||0) + ’ 顆’)
+)
+),
+e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:12 } },
+e(‘button’, { className:‘btn-round’, onClick:() => updateInv(bt.id,-1),
+style:{ background:‘rgba(224,90,90,0.12)’, color:C.danger, border:`1.5px solid rgba(224,90,90,0.3)` } }, ‘−’),
+e(‘span’, { style:{ fontSize:24, fontWeight:800, color:bt.color, minWidth:38, textAlign:‘center’ } }, inventory[bt.id]||0),
+e(‘button’, { className:‘btn-round’, onClick:() => updateInv(bt.id,1),
+style:{ background:`${bt.color}18`, color:bt.color, border:`1.5px solid ${bt.color}55` } }, ‘+’)
+)
+)
+)
+);
+
+// ── DEVICES ──
+const devicesTab = e(‘div’, null,
+e(‘div’, { style:{ display:‘flex’, justifyContent:‘space-between’, alignItems:‘center’, marginBottom:14 } },
+e(‘div’, { style:{ color:C.sub, fontSize:13 } }, devices.length + ’ 個裝置’),
+e(‘button’, { className:‘add-btn’, onClick:() => setShowAdd(true) }, ‘+ 新增裝置’)
+),
+devices.length === 0
+? e(‘div’, { className:‘empty’ },
+e(‘div’, { style:{ fontSize:42, marginBottom:12 } }, ‘🔌’),
+‘還沒有裝置，點右上角新增’
+)
+: e(‘div’, null,
+…devices.map(d => {
+const bt = BATTERY_TYPES.find(b => b.id === d.batteryType);
+return e(‘div’, { key:d.id, className:‘card’ },
+editing === d.id
+? e(‘div’, null,
+e(‘div’, { style:{ fontSize:12, color:C.sub, marginBottom:6 } }, ‘Emoji 圖示’),
+e(‘div’, { style:{ display:‘flex’, flexWrap:‘wrap’, gap:6, marginBottom:10 } },
+…ICONS.map(ic => e(‘button’, {
+key:ic, className:‘emoji-btn’ + (d.icon===ic?’ selected’:’’),
+onClick:() => updateDev(d.id,‘icon’,ic)
+}, ic))
+),
+e(‘input’, { className:‘input-field’, value:d.name, placeholder:‘裝置名稱’,
+onChange:ev => updateDev(d.id,‘name’,ev.target.value) }),
+e(‘div’, { style:{ display:‘flex’, gap:8, marginTop:8 } },
+e(‘select’, { className:‘input-field’, value:d.batteryType, style:{ flex:2, width:‘auto’ },
+onChange:ev => updateDev(d.id,‘batteryType’,ev.target.value) },
+…BATTERY_TYPES.map(b => e(‘option’, { key:b.id, value:b.id }, b.label))
+),
+e(‘input’, { type:‘number’, min:1, max:20, className:‘input-field’, value:d.count, style:{ flex:1, width:‘auto’ },
+onChange:ev => updateDev(d.id,‘count’,parseInt(ev.target.value)||1) }),
+e(‘span’, { style:{ color:C.sub, alignSelf:‘center’, fontSize:13 } }, ‘顆’)
+),
+e(‘button’, { className:‘done-btn’, onClick:() => setEditing(null) }, ‘完成’)
+)
+: e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, justifyContent:‘space-between’ } },
+e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:12 } },
+e(‘span’, { style:{ fontSize:28 } }, d.icon),
+e(‘div’, null,
+e(‘div’, { style:{ fontWeight:700, fontSize:15, color:C.dark } }, d.name),
+e(‘div’, { style:{ fontSize:12, color:C.sub } },
+e(‘span’, { style:{ color: bt ? bt.color : C.sub } }, bt ? bt.label : ‘’),
+’ × ’ + d.count + ’ 顆’
+)
+)
+),
+e(‘div’, { style:{ display:‘flex’, gap:6 } },
+e(‘button’, { className:‘icon-btn’, onClick:() => setEditing(d.id) }, ‘✏️’),
+e(‘button’, { className:‘icon-btn’, onClick:() => removeDevice(d.id) }, ‘🗑️’)
+)
+)
+);
+})
+)
+);
+
+// ── MODAL ──
+const modal = showAdd && e(‘div’, { className:‘modal-overlay’, onClick:ev => ev.target===ev.currentTarget && setShowAdd(false) },
+e(‘div’, { className:‘modal-box’ },
+e(‘div’, { style:{ fontWeight:700, fontSize:17, color:C.dark, marginBottom:16 } }, ‘新增裝置’),
+e(‘div’, { style:{ fontSize:12, color:C.sub, marginBottom:6 } }, ‘選擇圖示’),
+e(‘div’, { style:{ display:‘flex’, flexWrap:‘wrap’, gap:6, marginBottom:14 } },
+…ICONS.map(ic => e(‘button’, {
+key:ic, className:‘emoji-btn’ + (newDev.icon===ic?’ selected’:’’),
+onClick:() => setNewDev(p => ({ …p, icon:ic }))
+}, ic))
+),
+e(‘input’, { className:‘input-field’, value:newDev.name, placeholder:‘裝置名稱（例：電視遙控器）’,
+onChange:ev => setNewDev(p => ({ …p, name:ev.target.value })) }),
+e(‘div’, { style:{ display:‘flex’, gap:8, marginTop:10 } },
+e(‘select’, { className:‘input-field’, value:newDev.batteryType, style:{ flex:2, width:‘auto’ },
+onChange:ev => setNewDev(p => ({ …p, batteryType:ev.target.value })) },
+…BATTERY_TYPES.map(bt => e(‘option’, { key:bt.id, value:bt.id }, bt.label))
+),
+e(‘input’, { type:‘number’, min:1, max:20, className:‘input-field’, value:newDev.count, style:{ flex:1, width:‘auto’ },
+onChange:ev => setNewDev(p => ({ …p, count:ev.target.value })) }),
+e(‘span’, { style:{ color:C.sub, alignSelf:‘center’, fontSize:13 } }, ‘顆’)
+),
+e(‘div’, { style:{ display:‘flex’, gap:10, marginTop:18 } },
+e(‘button’, { className:‘modal-cancel’, onClick:() => setShowAdd(false) }, ‘取消’),
+e(‘button’, { className:‘modal-confirm’, onClick:addDevice }, ‘新增’)
+)
+)
+);
+
+return e(‘div’, { style:{ minHeight:‘100vh’, background:’#dff0fb’, color:C.text, paddingBottom:80 } },
+// Header
+e(‘div’, { style:{
+background:`linear-gradient(135deg, ${C.dark} 0%, ${C.primary} 60%, ${C.accent} 100%)`,
+padding:‘22px 20px 18px’, position:‘sticky’, top:0, zIndex:10,
+boxShadow:‘0 2px 14px rgba(14,77,128,0.2)’
+} },
+e(‘div’, { style:{ display:‘flex’, alignItems:‘center’, gap:10 } },
+e(‘span’, { style:{ fontSize:28 } }, ‘🔋’),
+e(‘div’, null,
+e(‘div’, { style:{ fontSize:18, fontWeight:700, color:’#fff’, letterSpacing:‘0.03em’ } }, ‘充電電池管理’),
+e(‘div’, { style:{ fontSize:11, color:‘rgba(255,255,255,0.6)’ } }, ‘Battery Manager’)
+)
+)
+),
+// Tabs
+e(‘div’, { style:{ display:‘flex’, background:’#fff’, borderBottom:`1.5px solid ${C.border}`, padding:‘0 12px’ } },
+…[ [‘overview’,‘📊 總覽’], [‘devices’,‘🔌 裝置’], [‘inventory’,‘🗃️ 庫存’] ].map(([key,label]) =>
+e(‘button’, { key, className:‘tab-btn’ + (tab===key?’ active’:’’), onClick:() => setTab(key) }, label)
+)
+),
+// Content
+e(‘div’, { style:{ padding:16 } },
+tab === ‘overview’   ? overviewTab :
+tab === ‘inventory’  ? inventoryTab :
+devicesTab
+),
+modal
+);
+}
+
+ReactDOM.createRoot(document.getElementById(‘root’)).render(e(App, null));
+</script>
+
 </body>
 </html>
